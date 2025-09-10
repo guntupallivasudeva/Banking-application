@@ -4,6 +4,7 @@ import {expressMiddleware} from "@as-integrations/express5";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 // import cors from "cors";
+import accountsRoutes from "./routes/accountRoutes.js";
 import { typeDefs,resolvers } from "./graphql/schema.js";
 import { authMiddleware } from "./middleware/auth.js";
 
@@ -27,6 +28,10 @@ const server = new ApolloServer({
 const startServer = async () => {
     // Start the Apollo Server
     await server.start();
+
+    //integrate account REST API routes
+    app.use("/api/accounts", accountsRoutes);
+
     //use express middleware to integrate apollo server with express server
   app.use(
     '/graphql', //this is the path for your graphql server
@@ -51,8 +56,6 @@ mongoose.connect(process.env.MONGO_URL)
   })
   .catch((error) => console.error("Database connection error:", error));
 };
-
-
 
 
 //start the express server

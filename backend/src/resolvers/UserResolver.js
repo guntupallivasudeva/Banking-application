@@ -83,7 +83,7 @@ export const userResolver = {
         const token = jwt.sign(
             { userId: user.id, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: '8h' }
+            { expiresIn: '8d' }
         );
         return {  token , user };
     }
