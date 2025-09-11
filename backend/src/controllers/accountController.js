@@ -31,7 +31,7 @@ export const createAccount = async (req, res) => {
 
         const newAccount = new Account({
             ...req.body,
-            UserId: req.user.userId,
+            userId: req.user.userId,
             accountNumber: uuidv4(),
         });
 
@@ -75,7 +75,7 @@ export const deposit = async (req, res) => {
         }
 
         //checking if user is owner of the account
-        if (account.UserId.toString() !== req.user.userId) {
+        if (account.userId.toString() !== req.user.userId) {
             return res.status(403).json({ error: "Forbidden: You do not own this account." });
         }
 
@@ -115,7 +115,7 @@ export const withdraw = async (req, res) => {
     }
 
     // checking if user is owner of the account
-    if (account.UserId.toString() !== req.user.userId) {
+    if (account.userId.toString() !== req.user.userId) {
       return res.status(403).json({ error: "Forbidden: You do not own this account." });
     }
 
@@ -175,7 +175,7 @@ export const transfer = async (req, res) => {
         }
 
         // if user is not owner of fromAccount
-        if (fromAccount.UserId.toString() !== req.user.userId) {
+        if (fromAccount.userId.toString() !== req.user.userId) {
             await session.abortTransaction();
             session.endSession();
             return res.status(403).json({ error: "Forbidden: You do not own the source account." });

@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 // import cors from "cors";
 import accountsRoutes from "./routes/accountRoutes.js";
+import loansRoutes from "./routes/loanRoutes.js";
 import { typeDefs,resolvers } from "./graphql/schema.js";
 import { authMiddleware } from "./middleware/auth.js";
 
@@ -31,6 +32,7 @@ const startServer = async () => {
 
     //integrate account REST API routes
     app.use("/api/accounts", accountsRoutes);
+    app.use("/api/loans", loansRoutes);
 
     //use express middleware to integrate apollo server with express server
   app.use(
