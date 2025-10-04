@@ -16,8 +16,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MONGODB_URL=mongodb+srv://Vasu:anu@cluster0.xc0pjwg.mongodb.net/Banking-Application
-      - JWT_SECRET=JWT_SECRET_KEY
+      - MONGODB_URL=write your mongodb url either atlas or local
+      - JWT_SECRET=write your jwt secret key
     depends_on:
       - mongo
     restart: unless-stopped
