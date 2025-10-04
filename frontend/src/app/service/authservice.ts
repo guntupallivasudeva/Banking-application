@@ -1,13 +1,26 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+
+// Allow referencing a runtime injected global API_KEY without editing environment files
+// globalThis.API_KEY is preferred (set via index.html). Fallback keeps previous localhost behavior.
+declare const API_KEY: string | undefined;
+const API_ROOT = (() => {
+  try {
+    const g: any = (globalThis as any);
+    if (g && typeof g.API_KEY === 'string' && g.API_KEY.length) return g.API_KEY;
+    if (typeof API_KEY !== 'undefined' && API_KEY) return API_KEY;
+  } catch (_) { /* ignore */ }
+  return 'http://localhost:8000/api';
+})();
+const NORMALIZED_API_ROOT = API_ROOT.replace(/\/$/, '');
 
 @Injectable({
   providedIn: 'root'
 })
 export class Authservice {
-  private base = 'http://localhost:8000/api/auth';
+  private base = `${NORMALIZED_API_ROOT}/auth`;
   constructor(private http: HttpClient, private router: Router) { }
 
   signup(name: string, email: string, password: string) {

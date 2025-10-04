@@ -2,11 +2,22 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+declare const API_KEY: string | undefined;
+const API_ROOT = (() => {
+  try {
+    const g: any = (globalThis as any);
+    if (g && typeof g.API_KEY === 'string' && g.API_KEY.length) return g.API_KEY;
+    if (typeof API_KEY !== 'undefined' && API_KEY) return API_KEY;
+  } catch (_) { /* ignore */ }
+  return 'http://localhost:8000/api';
+})();
+const NORMALIZED_API_ROOT = API_ROOT.replace(/\/$/, '');
+
 @Injectable({
   providedIn: 'root'
 })
   export class Accountservice {
-  private apiUrl = 'http://localhost:8000/api/accounts';
+  private apiUrl = `${NORMALIZED_API_ROOT}/accounts`;
 
   constructor(private http: HttpClient) {}
 

@@ -26,6 +26,7 @@ export class AdminLoans implements OnInit {
   approvedInterestRate = 8.5;
   approvedTerm = 12;
   declineReason = '';
+adminUser: any;
 
   constructor(
     private adminLoanService: AdminLoanService,

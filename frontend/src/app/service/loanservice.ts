@@ -3,11 +3,22 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoanApplicationRequest, UserLoan, SimpleLoanApplication } from '../models/loan-application.interface';
 
+declare const API_KEY: string | undefined;
+const API_ROOT = (() => {
+  try {
+    const g: any = (globalThis as any);
+    if (g && typeof g.API_KEY === 'string' && g.API_KEY.length) return g.API_KEY;
+    if (typeof API_KEY !== 'undefined' && API_KEY) return API_KEY;
+  } catch (_) { /* ignore */ }
+  return 'http://localhost:8000/api';
+})();
+const NORMALIZED_API_ROOT = API_ROOT.replace(/\/$/, '');
+
 @Injectable({
   providedIn: 'root'
 })
 export class Loanservice {
-  private apiUrl = 'http://localhost:8000/api/loans';
+  private apiUrl = `${NORMALIZED_API_ROOT}/loans`;
 
   constructor(private http: HttpClient) {}
 

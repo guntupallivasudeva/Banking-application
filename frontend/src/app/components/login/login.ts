@@ -25,7 +25,9 @@ export class Login {
 
   async doLogin() {
     try {
+      console.log('Attempting login with:', this.email);
       const result: any = await this.authService.login(this.email, this.password);
+      console.log('Login result:', result);
       // REST login returns { token, user }
       if (result && result.token) {
         const { token, user } = result;
@@ -46,7 +48,8 @@ export class Login {
         this.successMessage = '';
       }
     } catch (error: any) {
-      this.errorMessage = error?.error?.error || error?.message || 'Login failed. Please try again.';
+      console.error('Login error:', error);
+      this.errorMessage = error?.error?.error || error?.message || 'Login failed. Please check if backend server is running on port 8000.';
       this.successMessage = '';
     }
   }
