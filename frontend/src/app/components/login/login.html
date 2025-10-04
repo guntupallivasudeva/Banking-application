@@ -1,0 +1,97 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  
+  <!-- Header with Bank Name -->
+  <header class="bg-white shadow-lg border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        
+        <!-- Bank Name/Logo -->
+        <div class="flex items-center">
+          <div class="flex items-center space-x-3">
+            <!-- Bank Icon -->
+            <div class="bg-gradient-to-br from-blue-600 to-indigo-600 w-12 h-12 rounded-lg flex items-center justify-center shadow-lg">
+              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+              </svg>
+            </div>
+            <!-- Bank Name -->
+            <div>
+              <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Deva International Bank (DIB)
+              </h1>
+              <p class="text-sm text-gray-600 font-medium">Your Trusted Banking Partner</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex items-center space-x-2">
+          <a routerLink="/main" 
+             class="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium">
+            Home
+          </a>
+          <a routerLink="/signup" 
+             class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-all duration-200 font-medium shadow-md hover:shadow-lg">
+            Sign Up
+          </a>
+        </nav>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Login Form Section -->
+  <div class="flex items-center justify-center py-16">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h2>
+        <p class="text-gray-600">Sign in to your account</p>
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" class="space-y-6">
+        <div>
+          <label for="email" class="block text-gray-700 font-semibold mb-2">Email Address</label>
+          <input type="email" id="email" [(ngModel)]="email" name="email" required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+        </div>
+        
+        <div>
+          <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+          <input type="password" id="password" [(ngModel)]="password" name="password" required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+        </div>
+        
+        <button type="submit" 
+                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+          Log In
+        </button>
+      </form>
+      
+      <!-- Messages -->
+      <div class="mt-6 space-y-2">
+        @if(successMessage){
+          <div class="text-green-600 text-center bg-green-50 p-3 rounded-lg border border-green-200">
+            {{ successMessage }}
+          </div>
+        }  
+        @if(errorMessage){
+          <div class="text-red-600 text-center bg-red-50 p-3 rounded-lg border border-red-200">
+            {{ errorMessage }}
+          </div>
+        }
+      </div>
+      
+      <!-- Sign Up Link -->
+      <div class="mt-8 text-center">
+        <p class="text-gray-600">
+          Don't have an account? 
+          <a routerLink="/signup" class="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors">
+            Sign up here
+          </a>
+        </p>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>

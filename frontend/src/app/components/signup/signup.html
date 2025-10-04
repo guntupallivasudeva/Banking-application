@@ -1,0 +1,117 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+  <!-- Header -->
+  <header class="bg-white shadow-lg border-b-2 border-blue-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Bank Logo and Name -->
+        <div class="flex items-center space-x-4">
+          <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-lg">
+            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4zM18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Deva International Bank (DIB)
+            </h1>
+            <p class="text-sm text-gray-500 -mt-1">Your Trusted Banking Partner</p>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex items-center space-x-1">
+          <a routerLink="/" 
+             class="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 font-medium">
+            Home
+          </a>
+          <a routerLink="/login" 
+             class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition-all duration-200 font-medium shadow-md hover:shadow-lg">
+            Log in
+          </a>
+        </nav>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Signup Form Section -->
+  <div class="flex items-center justify-center py-16">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
+        <p class="text-gray-600">Join Deva International Bank (DIB) today</p>
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" class="space-y-6">
+        <div>
+          <label for="name" class="block text-gray-700 font-semibold mb-2">Full Name</label>
+          <input type="text" id="name" [(ngModel)]="name" name="name" required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+        </div>
+        
+        <div>
+          <label for="email" class="block text-gray-700 font-semibold mb-2">Email Address</label>
+          <input type="email" id="email" [(ngModel)]="email" name="email" required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+        </div>
+        
+        <div>
+          <label for="password" class="block text-gray-700 font-semibold mb-2">Password</label>
+          <input type="password" id="password" [(ngModel)]="password" name="password" required
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+        </div>
+        
+        <div class="flex items-start">
+          <div class="flex items-center h-5">
+            <input type="checkbox" [(ngModel)]="agreedToTerms" name="agreedToTerms" required 
+                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
+          </div>
+          <div class="ml-3 text-sm">
+            <label for="agreedToTerms" class="text-gray-700">
+              I agree to the 
+              <a href="#" class="text-blue-600 hover:text-blue-700 hover:underline font-medium">
+                Terms and Conditions
+              </a> 
+              and 
+              <a href="#" class="text-blue-600 hover:text-blue-700 hover:underline font-medium">
+                Privacy Policy
+              </a>
+            </label>
+          </div>
+        </div>
+        
+        <button type="submit" 
+                class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+          Create Account
+        </button>
+      </form>
+      
+      <!-- Messages -->
+      <div class="mt-6 space-y-2">
+        @if(successMessage){
+          <div class="text-green-600 text-center bg-green-50 p-3 rounded-lg border border-green-200">
+            {{ successMessage }}
+          </div>
+        }  
+        @if(errorMessage){
+          <div class="text-red-600 text-center bg-red-50 p-3 rounded-lg border border-red-200">
+            {{ errorMessage }}
+          </div>
+        }
+      </div>
+      
+      <!-- Log In Link -->
+      <div class="mt-8 text-center">
+        <p class="text-gray-600">
+          Already have an account? 
+          <a routerLink="/login" class="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors">
+            Log in here
+          </a>
+        </p>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>

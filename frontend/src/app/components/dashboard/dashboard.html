@@ -1,0 +1,143 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+  <div class="max-w-6xl mx-auto px-4">
+    <!-- Logout button (top-right) -->
+    <div class="flex justify-end mb-4">
+      <button (click)="logout()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Logout</button>
+    </div>
+    
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-5xl font-bold text-gray-800 mb-2 tracking-tight">
+        <span class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Deva International Bank (DIB)
+        </span>
+      </h1>
+      <p class="text-xl text-gray-600 font-light">Your Digital Banking Experience</p>
+      <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto mt-4 rounded-full"></div>
+    </div>
+
+    <!-- Welcome Message (Dedicated Container) -->
+    <div class="max-w-3xl mx-auto mb-10">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md border border-gray-200 px-6 py-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <!-- Left: Greeting -->
+          <div class="text-center md:text-left">
+            <h2 class="text-3xl font-bold tracking-tight text-gray-800">
+              Welcome{{ userName ? (', ' + userName) : '' }}!
+            </h2>
+            <p class="text-gray-600 text-sm md:text-base mt-2">Manage your finances with ease and security</p>
+          </div>
+          <!-- Right: Live Time -->
+          <div class="flex flex-col items-center md:items-end text-gray-700">
+            <p class="mt-1 text-base font-semibold flex items-center gap-2" *ngIf="currentTime as ct">
+              <span>{{ ct | date:'h:mm:ss a' }}</span>
+            </p>
+            <p class="text-xs text-gray-500" *ngIf="currentTime as ct">{{ ct | date:'EEE, MMM d, y' }}</p>
+            <div class="mt-1">
+              <span class="text-xs font-medium px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200" [title]="timeZone">{{ timeZoneShort }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      
+      <!-- Open Account Card -->
+      <a routerLink="/open-account" 
+         class="group bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-8 text-center border border-gray-100">
+        <div class="bg-gradient-to-br from-green-400 to-green-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2 group-hover:text-green-600 transition-colors">Open Account</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">Create new savings, current, or fixed deposit accounts</p>
+      </a>
+
+      <!-- My Accounts Card -->
+      <a routerLink="/my-accounts" 
+         class="group bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-8 text-center border border-gray-100">
+        <div class="bg-gradient-to-br from-blue-400 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">My Accounts</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">View balances, deposit, withdraw, and transfer funds</p>
+      </a>
+
+      <!-- Apply for Loans Card -->
+      <a routerLink="/apply-loans" 
+         class="group bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-8 text-center border border-gray-100">
+        <div class="bg-gradient-to-br from-purple-400 to-purple-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2 group-hover:text-purple-600 transition-colors">Apply for Loans</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">Personal, home, education, auto, and business loans</p>
+      </a>
+
+      <!-- Repayments Card -->
+      <a routerLink="/repayments" 
+         class="group bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-8 text-center border border-gray-100">
+        <div class="bg-gradient-to-br from-orange-400 to-orange-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2 group-hover:text-orange-600 transition-colors">Repayments</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">Track and manage your loan EMI payments</p>
+      </a>
+
+      <!-- My Profile Card -->
+      <a routerLink="/myprofile" 
+         class="group bg-white rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-8 text-center border border-gray-100">
+        <div class="bg-gradient-to-br from-indigo-400 to-indigo-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">My Profile</h3>
+        <p class="text-gray-600 text-sm leading-relaxed">Update personal information and preferences</p>
+      </a>
+
+      <!-- Quick Stats Card (Placeholder for future enhancement) -->
+      <div class="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg p-8 text-center border border-gray-200">
+        <div class="bg-gradient-to-br from-teal-400 to-teal-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">Quick Stats</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">Account summaries and recent activities</p>
+        <p class="text-xs text-gray-400 mt-2 italic">Coming Soon</p>
+      </div>
+
+    </div>
+
+    <!-- Footer Section -->
+    <div class="text-center mt-16 pb-8">
+      <p class="text-gray-500 text-sm">
+        Secure • Reliable • Always Available
+      </p>
+      <div class="flex justify-center items-center mt-4 space-x-6 text-gray-400">
+        <div class="flex items-center">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <span class="text-xs">Bank Grade Security</span>
+        </div>
+        <div class="flex items-center">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <span class="text-xs">Fast Transactions</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,167 @@
+<div class="max-w-6xl mx-auto mt-8 p-6 bg-white rounded shadow">
+  <!-- Header with Back Button -->
+  <div class="flex justify-between items-center mb-6">
+    <div class="flex items-center gap-4">
+      <button (click)="goBack()" 
+              type="button"
+              class="bg-gray-500 text-white px-3 py-2 rounded-lg hover:bg-gray-600 transition duration-200 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+        Back
+      </button>
+      <h2 class="text-2xl font-bold text-gray-800">Loan Repayments</h2>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="errorMessage" class="text-red-600 mb-4 text-center bg-red-50 p-3 rounded">
+    {{ errorMessage }}
+    <button (click)="clearMessages()" class="ml-2 text-red-800 hover:text-red-900">&times;</button>
+  </div>
+  <div *ngIf="successMessage" class="text-green-600 mb-4 text-center bg-green-50 p-3 rounded">
+    {{ successMessage }}
+    <button (click)="clearMessages()" class="ml-2 text-green-800 hover:text-green-900">&times;</button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+    <p class="mt-2 text-gray-600">Loading...</p>
+  </div>
+
+  <!-- No Loans Available -->
+  <div *ngIf="!loading && loans.length === 0" class="text-center py-8">
+    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+      <svg class="w-12 h-12 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+      </svg>
+      <h3 class="text-lg font-semibold text-yellow-800 mb-2">No Active Loans</h3>
+      <p class="text-yellow-700">You don't have any approved or active loans that require repayments.</p>
+      <button (click)="goToLoans()" 
+              class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+        Apply for a Loan
+      </button>
+    </div>
+  </div>
+
+  <!-- Loans List -->
+  <div *ngIf="!loading && loans.length > 0" class="space-y-6">
+    <!-- Loan Selection -->
+    <div *ngIf="!selectedLoan">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Select a Loan to View Repayments</h3>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div *ngFor="let loan of loans" 
+             (click)="selectLoan(loan)"
+             class="border border-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-50 hover:border-blue-500 transition-all duration-200">
+          <div class="flex justify-between items-start mb-2">
+            <h4 class="font-semibold text-gray-800">{{ loan.loanType }} Loan</h4>
+          </div>
+          <p class="text-sm text-gray-600 mb-1">Amount: ₹{{ loan.amount | number:'1.2-2' }}</p>
+          <p class="text-sm text-gray-600 mb-1">Interest: {{ loan.interestRate }}% p.a.</p>
+          <p class="text-sm text-gray-600">Tenure: {{ loan.tenureMonths }} months</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Loan Repayment Schedule -->
+    <div *ngIf="selectedLoan">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">
+          Repayment Schedule - {{ selectedLoan.loanType }} Loan
+        </h3>
+        <button (click)="selectedLoan = null; repayments = []" 
+                class="text-blue-600 hover:text-blue-700 underline">
+          Back to Loans
+        </button>
+      </div>
+
+      <!-- Loan Summary -->
+      <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div>
+            <span class="text-gray-600">Loan Amount:</span>
+            <p class="font-semibold">₹{{ selectedLoan.amount | number:'1.2-2' }}</p>
+          </div>
+          <div>
+            <span class="text-gray-600">Interest Rate:</span>
+            <p class="font-semibold">{{ selectedLoan.interestRate }}% p.a.</p>
+          </div>
+          <div>
+            <span class="text-gray-600">Tenure:</span>
+            <p class="font-semibold">{{ selectedLoan.tenureMonths }} months</p>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Next Payment Due -->
+      <div *ngIf="getNextUnpaidInstallment()" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <h4 class="font-semibold text-blue-800 mb-2">Next Payment Due</h4>
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-blue-700">Due Date: {{ getNextUnpaidInstallment()?.dueDate | date:'mediumDate' }}</p>
+            <p class="text-blue-700 font-semibold">Amount: ₹{{ getNextUnpaidInstallment()?.amount | number:'1.2-2' }}</p>
+          </div>
+          <button (click)="makePayment(getNextUnpaidInstallment()!)" 
+                  [disabled]="paymentLoading"
+                  class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            <span *ngIf="paymentLoading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+            {{ paymentLoading ? 'Processing...' : 'Pay Now' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- No Repayments Found -->
+      <div *ngIf="!loading && repayments.length === 0" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+          </svg>
+          <p class="text-yellow-800">No repayment schedule found for this loan. This may occur if the loan was recently approved.</p>
+        </div>
+        <button (click)="loadRepaymentSchedule(selectedLoan._id)" 
+                class="mt-2 text-yellow-700 hover:text-yellow-800 underline text-sm">
+          Refresh
+        </button>
+      </div>
+
+      <!-- Full Repayment Schedule -->
+      <div *ngIf="!loading && repayments.length > 0" class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-300 rounded-lg">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Installment</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paid Date</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let repayment of repayments; let i = index" 
+                [ngClass]="{'bg-green-50': repayment.paid, 'bg-white': !repayment.paid}">
+              <td class="px-4 py-3 text-sm text-gray-900">{{ i + 1 }}</td>
+              <td class="px-4 py-3 text-sm text-gray-900">{{ repayment.dueDate | date:'shortDate' }}</td>
+              <td class="px-4 py-3 text-sm font-semibold text-gray-900">₹{{ repayment.amount | number:'1.2-2' }}</td>
+              <td class="px-4 py-3 text-sm text-gray-900">
+                {{ repayment.paidDate ? (repayment.paidDate | date:'shortDate') : '-' }}
+              </td>
+              <td class="px-4 py-3 text-sm">
+                <button *ngIf="!repayment.paid && repayment === getNextUnpaidInstallment()" 
+                        (click)="makePayment(repayment)"
+                        [disabled]="paymentLoading"
+                        class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                  {{ paymentLoading ? 'Processing...' : 'Pay' }}
+                </button>
+                <span *ngIf="repayment.paid" class="text-green-600 text-xs">✓ Completed</span>
+                <span *ngIf="!repayment.paid && repayment !== getNextUnpaidInstallment()" class="text-gray-400 text-xs">Future</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

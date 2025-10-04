@@ -192,3 +192,190 @@ export const payLoanInstallment = async (req, res) => {
     res.status(500).json({ error: "Failed to process payment: " + error.message });
   }
 };
+
+// Admin: Get all loan applications
+export const adminGetAllLoans = async (req, res) => {
+  try {
+    // populate user info
+    const loans = await Loan.find().populate('userId', 'name email').lean();
+
+    // Gather userIds and map accounts
+    const userIds = [...new Set(loans.map(l => l.userId?._id).filter(Boolean))];
+    const accounts = await Account.find({ userId: { $in: userIds } }).lean();
+    const accountsByUser = {};
+    for (const acc of accounts) {
+      const key = acc.userId.toString();
+      if (!accountsByUser[key]) accountsByUser[key] = [];
+      accountsByUser[key].push(acc);
+    }
+
+    // Attach a representative account and computed placeholder monthlyPayment if interestRate present
+    const enriched = loans.map(l => {
+      const userKey = l.userId?._id?.toString();
+      const primaryAccount = userKey && accountsByUser[userKey] ? accountsByUser[userKey][0] : null;
+      let monthlyPayment = undefined;
+      if (l.interestRate && l.tenureMonths && l.amount) {
+        const r = (l.interestRate / 100) / 12;
+        if (r === 0) {
+          monthlyPayment = l.amount / l.tenureMonths;
+        } else {
+          monthlyPayment = l.amount * (r * Math.pow(1 + r, l.tenureMonths)) / (Math.pow(1 + r, l.tenureMonths) - 1);
+        }
+        monthlyPayment = parseFloat(monthlyPayment.toFixed(2));
+      }
+      return {
+        ...l,
+        accountId: primaryAccount ? {
+          _id: primaryAccount._id,
+          accountNumber: primaryAccount.accountNumber,
+          type: primaryAccount.type,
+          balance: primaryAccount.balance
+        } : null,
+        monthlyPayment
+      };
+    });
+
+    res.json({ loans: enriched, count: enriched.length });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Admin: Approve loan (sets status to Approved and generates repayment schedule)
+export const adminApproveLoan = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { interestRate, term, monthlyPayment, approvedDate } = req.body;
+    const loanId = req.params.id;
+    const loan = await Loan.findById(loanId).session(session);
+    if (!loan) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ message: 'Loan not found.' });
+    }
+
+    const previousStatus = loan.status;
+    loan.status = 'Approved';
+    if (interestRate) loan.interestRate = interestRate;
+    if (term) loan.tenureMonths = term;
+
+    // If transitioning from Pending to Approved, generate repayments
+    if (previousStatus === 'Pending' && loan.status === 'Approved') {
+      const repayments = generateRepaymentSchedule(loan);
+      await Repayment.insertMany(repayments, { session });
+    }
+
+    await loan.save({ session });
+    await session.commitTransaction();
+    session.endSession();
+
+    res.json({ message: 'Loan approved', loan });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Admin: Decline loan
+export const adminDeclineLoan = async (req, res) => {
+  try {
+    const loanId = req.params.id;
+    const loan = await Loan.findById(loanId);
+    if (!loan) return res.status(404).json({ message: 'Loan not found.' });
+    loan.status = 'Rejected';
+    await loan.save();
+    res.json({ message: 'Loan declined', loan });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Admin: Get loan details with account(s)
+export const adminGetLoanDetails = async (req, res) => {
+  try {
+    const loanId = req.params.id;
+    const loan = await Loan.findById(loanId).populate('userId', 'name email');
+    if (!loan) return res.status(404).json({ message: 'Loan not found.' });
+    const accounts = await Account.find({ userId: loan.userId });
+    res.json({ loan, accounts });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Admin: Get all repayments
+export const adminGetAllRepayments = async (req, res) => {
+  try {
+    // Fetch all loans with user
+    const loans = await Loan.find().populate('userId', 'name email');
+
+    // Preload all accounts grouped by userId for quick lookup
+    const userIds = [...new Set(loans.map(l => l.userId && l.userId._id).filter(Boolean))];
+    const accountsByUser = {};
+    if (userIds.length > 0) {
+      const accounts = await Account.find({ userId: { $in: userIds } });
+      for (const acc of accounts) {
+        const key = acc.userId.toString();
+        if (!accountsByUser[key]) accountsByUser[key] = [];
+        accountsByUser[key].push(acc);
+      }
+    }
+
+    // Fetch all repayments and group by loanId
+    const repayments = await Repayment.find();
+    const repaymentsByLoan = {};
+    for (const r of repayments) {
+      const key = r.loanId.toString();
+      if (!repaymentsByLoan[key]) repaymentsByLoan[key] = [];
+      repaymentsByLoan[key].push(r);
+    }
+
+    const loanAccounts = loans.map(loan => {
+      const loanIdStr = loan._id.toString();
+      const rList = (repaymentsByLoan[loanIdStr] || []).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
+      const totalRepayments = rList.length;
+      const paidRepayments = rList.filter(r => r.paid).length;
+      const totalPaidAmount = rList.filter(r => r.paid).reduce((sum, r) => sum + r.amount, 0);
+      const totalRemainingAmount = rList.filter(r => !r.paid).reduce((sum, r) => sum + r.amount, 0);
+      const firstAccount = (accountsByUser[loan.userId?._id?.toString()] || [])[0] || null;
+
+      return {
+        _id: loan._id,
+        amount: loan.amount,
+        interestRate: loan.interestRate,
+        tenureMonths: loan.tenureMonths,
+        userDetails: {
+          name: loan.userId?.name || 'Unknown',
+          email: loan.userId?.email || 'Unknown',
+          phone: '' // phone not in schema currently
+        },
+        accountDetails: firstAccount ? {
+          accountNumber: firstAccount.accountNumber,
+            type: firstAccount.type,
+            balance: firstAccount.balance
+        } : {
+          accountNumber: 'N/A',
+            type: 'N/A',
+            balance: 0
+        },
+        repayments: rList.map(r => ({
+          _id: r._id,
+          dueDate: r.dueDate,
+          amount: r.amount,
+          paid: r.paid,
+          paidDate: r.paidDate || null
+        })),
+        totalRepayments,
+        paidRepayments,
+        totalPaidAmount: parseFloat(totalPaidAmount.toFixed(2)),
+        totalRemainingAmount: parseFloat(totalRemainingAmount.toFixed(2))
+      };
+    });
+
+    res.json({ success: true, loanAccounts });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

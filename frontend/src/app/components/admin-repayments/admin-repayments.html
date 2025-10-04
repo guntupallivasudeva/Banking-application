@@ -1,0 +1,234 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+  <!-- Header -->
+  <header class="bg-white shadow-lg border-b-2 border-blue-100 mb-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Back Button and Title -->
+        <div class="flex items-center space-x-4">
+          <button (click)="goBack()" 
+                  class="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition-all duration-200">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+            </svg>
+          </button>
+          <div>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Loan Accounts
+            </h1>
+            <p class="text-sm text-gray-500 -mt-1">Monitor customer loan accounts and repayments</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+
+
+    <!-- Loan Account Cards -->
+    @if (loading) {
+      <div class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <span class="ml-3 text-gray-600">Loading loan accounts...</span>
+      </div>
+    } @else if (loanAccounts.length === 0) {
+      <div class="bg-white rounded-xl shadow-lg p-8 text-center border border-gray-200">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+        <h3 class="mt-2 text-sm font-medium text-gray-900">No loan accounts found</h3>
+        <p class="mt-1 text-sm text-gray-500">No loan accounts available.</p>
+      </div>
+    } @else {
+      <!-- Loan Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        @for (loanAccount of loanAccounts; track loanAccount._id) {
+          <div class="bg-white border border-gray-300 cursor-pointer p-4 rounded"
+               (click)="selectLoanAccount(loanAccount)">
+            
+            <!-- Customer Information -->
+            <div class="mb-4">
+              <h4 class="text-blue-700 font-semibold text-sm mb-3">Customer Information</h4>
+              <div class="space-y-2">
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">User Name:</p>
+                  <h3 class="text-base font-md text-gray-900">{{ loanAccount.userDetails.name }}</h3>
+                </div>
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">User Email:</p>
+                  <p class="text-sm text-gray-600 font-md">{{ loanAccount.userDetails.email }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Horizontal line separator -->
+            <hr class="border-gray-200 my-4">
+
+            <!-- Account Information -->
+            <div class="mb-4">
+              <h4 class="text-blue-700 font-semibold text-sm mb-3">Account Information</h4>
+              <div class="space-y-2">
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">Account No:</p>
+                  <p class="font-md text-gray-900">{{ loanAccount.accountDetails.accountNumber }}</p>
+                </div>
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">Account Type:</p>
+                  <p class="font-md text-gray-900">{{ loanAccount.accountDetails.type }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Horizontal line separator -->
+            <hr class="border-gray-200 my-4">
+
+            <!-- Loan Information -->
+            <div class="mb-3">
+              <h4 class="text-blue-700 font-semibold text-sm mb-3">Loan Information</h4>
+              <div class="space-y-2">
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">Loan ID:</p>
+                  <p class="font-md text-gray-900">{{ loanAccount._id }}</p>
+                </div>
+
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">Loan Amount:</p>
+                  <p class="font-md text-gray-900">₹{{ loanAccount.amount | number:'1.0-0' }}</p>
+                </div>
+
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">Interest Rate:</p>
+                  <p class="font-md text-gray-900">{{ loanAccount.interestRate }}%</p>
+                </div>
+
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">Tenure:</p>
+                  <p class="font-md text-gray-900">{{ loanAccount.tenureMonths }} months</p>
+                </div>
+
+                <!-- Payment Progress -->
+                <div class="flex items-center">
+                  <p class="text-gray-800 font-semibold text-sm mr-2">Payments:</p>
+                  <p class="text-sm font-md text-gray-900">{{ loanAccount.paidRepayments }}/{{ loanAccount.totalRepayments }}</p>
+                </div>
+
+                <!-- Payment Summary -->
+                <div class="pt-2 border-t border-gray-200 space-y-2">
+                  <div class="flex items-center">
+                    <p class="text-gray-800 font-semibold text-sm mr-2">Amount Paid:</p>
+                    <p class="font-md text-gray-900">₹{{ loanAccount.totalPaidAmount | number:'1.0-0' }}</p>
+                  </div>
+                  <div class="flex items-center">
+                    <p class="text-gray-800 font-semibold text-sm mr-2">Amount Remaining:</p>
+                    <p class="font-md text-gray-900">₹{{ loanAccount.totalRemainingAmount | number:'1.0-0' }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Click indicator -->
+              <div class="mt-3 pt-3 border-t border-gray-200 text-center">
+                <p class="text-sm text-gray-600 font-md">Click to view payment details →</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+
+  <!-- Loan Details Modal/Overlay -->
+  @if (selectedLoanAccount) {
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" (click)="closeLoanDetails()">
+      <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden" (click)="$event.stopPropagation()">
+        
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-bold">{{ selectedLoanAccount.userDetails.name }}'s Loan Details</h2>
+              <p class="text-blue-100 mt-1">{{ selectedLoanAccount.userDetails.email }} | {{ selectedLoanAccount.userDetails.phone }}</p>
+            </div>
+            <button (click)="closeLoanDetails()" class="text-white hover:text-blue-200 transition-colors">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+          
+          <!-- Account & Loan Summary -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-blue-50 rounded-lg p-4">
+              <h3 class="font-semibold text-blue-900 mb-2">Account Details</h3>
+              <p class="text-sm text-blue-700">Account: {{ selectedLoanAccount.accountDetails.accountNumber }}</p>
+              <p class="text-sm text-blue-700">Type: {{ selectedLoanAccount.accountDetails.type }}</p>
+              <p class="text-sm text-blue-700">Balance: ₹{{ selectedLoanAccount.accountDetails.balance | number:'1.0-0' }}</p>
+            </div>
+            <div class="bg-green-50 rounded-lg p-4">
+              <h3 class="font-semibold text-green-900 mb-2">Loan Summary</h3>
+              <p class="text-sm text-green-700">Amount: ₹{{ selectedLoanAccount.amount | number:'1.0-0' }}</p>
+              <p class="text-sm text-green-700">Rate: {{ selectedLoanAccount.interestRate }}%</p>
+              <p class="text-sm text-green-700">Tenure: {{ selectedLoanAccount.tenureMonths }} months</p>
+            </div>
+            <div class="bg-purple-50 rounded-lg p-4">
+              <h3 class="font-semibold text-purple-900 mb-2">Payment Status</h3>
+              <p class="text-sm text-purple-700">Paid: ₹{{ selectedLoanAccount.totalPaidAmount | number:'1.0-0' }}</p>
+              <p class="text-sm text-purple-700">Remaining: ₹{{ selectedLoanAccount.totalRemainingAmount | number:'1.0-0' }}</p>
+              <p class="text-sm text-purple-700">Progress: {{ getProgressPercentage(selectedLoanAccount) }}%</p>
+            </div>
+          </div>
+
+          <!-- Repayment Schedule -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Repayment Schedule</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Paid Date</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  @for (repayment of selectedLoanAccount.repayments; track repayment._id) {
+                    <tr [class]="repayment.paid ? 'bg-green-50' : 'bg-white'">
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {{ repayment.dueDate | date:'mediumDate' }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        ₹{{ repayment.amount | number:'1.0-0' }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span [class]="getStatusClass(repayment.paid)" class="inline-flex px-2 py-1 text-xs font-semibold rounded-full">
+                          {{ getStatusText(repayment.paid) }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        @if (repayment.paidDate) {
+                          {{ repayment.paidDate | date:'mediumDate' }}
+                        } @else {
+                          <span class="text-gray-400">-</span>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

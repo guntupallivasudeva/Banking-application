@@ -226,6 +226,29 @@ export const transfer = async (req, res) => {
     }
 };
 
+// @route DELETE /api/accounts/:id
+// @desc Delete an account (owner or admin)
+// @access Private (Owner or Admin)
+export const deleteAccount = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const account = await Account.findById(id);
+        if (!account) return res.status(404).json({ error: 'Account not found.' });
+
+        // Only the owner or admin can delete the account
+        if (account.userId.toString() !== req.user.userId && req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Forbidden: You do not have permission to delete this account.' });
+        }
+
+        await Account.findByIdAndDelete(id);
+
+        return res.json({ success: true, message: 'Account deleted successfully.' });
+    } catch (err) {
+        return res.status(500).json({ error: 'Failed to delete account: ' + err.message });
+    }
+};
+
 
 
 // // @route POST /api/accounts/transfer

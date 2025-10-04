@@ -1,0 +1,60 @@
+/* Admin Login Specific Styles */
+
+.admin-login-container {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%);
+  min-height: 100vh;
+}
+
+.admin-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.security-badge {
+  animation: pulse 2s infinite;
+}
+
+.error-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.loading-dots {
+  animation: loading 1.4s ease-in-out infinite both;
+}
+
+@keyframes loading {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+.form-field:focus-within {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.admin-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+}
+
+.admin-button:active {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .admin-card {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+}

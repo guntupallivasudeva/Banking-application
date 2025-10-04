@@ -1,0 +1,80 @@
+/* Custom styles for repayments component */
+.repayment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.1);
+}
+
+.payment-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.payment-button:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.payment-success {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.payment-error {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.repayment-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.repayment-table th:first-child {
+  border-top-left-radius: 0.5rem;
+}
+
+.repayment-table th:last-child {
+  border-top-right-radius: 0.5rem;
+}
+
+.repayment-table tr:last-child td:first-child {
+  border-bottom-left-radius: 0.5rem;
+}
+
+.repayment-table tr:last-child td:last-child {
+  border-bottom-right-radius: 0.5rem;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .repayment-table {
+    font-size: 0.875rem;
+  }
+  
+  .repayment-table th,
+  .repayment-table td {
+    padding: 0.5rem 0.25rem;
+  }
+}
