@@ -3,19 +3,17 @@
 <head>
   <meta charset="utf-8">
   <title>Deva International Bank (DIB)</title>
-  <base href="/">
+  <base href="./">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <!-- Font Awesome CDN for icon-only buttons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Runtime API key injection: adjust '/api' to your deployed backend base path if needed -->
+  <!-- Runtime API base injection: replace the production URL with your deployed backend API. -->
   <script>
-    // Only define if not already provided by another inline or external script
-    if (typeof API_KEY === 'undefined') {
-      // For direct backend access during development
-      const API_KEY = 'http://localhost:8000/api';
-      // Expose also on window for debugging (optional)
-      window.API_KEY = API_KEY;
+    if (typeof window.API_KEY === 'undefined') {
+      window.API_KEY = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:8000/api'
+        : 'https://YOUR-BACKEND-DOMAIN/api';
     }
   </script>
 </head>
