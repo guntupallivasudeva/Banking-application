@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-// Allow referencing a runtime injected global API_KEY without editing environment files
-// globalThis.API_KEY is preferred (set via index.html). Fallback keeps previous localhost behavior.
+// Allow referencing a runtime injected global API_KEY without editing environment files.
+// globalThis.API_KEY is preferred (set via index.html).
 declare const API_KEY: string | undefined;
 const API_ROOT = (() => {
   try {
@@ -12,7 +12,9 @@ const API_ROOT = (() => {
     if (g && typeof g.API_KEY === 'string' && g.API_KEY.length) return g.API_KEY;
     if (typeof API_KEY !== 'undefined' && API_KEY) return API_KEY;
   } catch (_) { /* ignore */ }
-  return 'http://localhost:8000/api';
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000/api'
+    : 'https://YOUR-BACKEND-DOMAIN/api';
 })();
 const NORMALIZED_API_ROOT = API_ROOT.replace(/\/$/, '');
 

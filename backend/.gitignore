@@ -155,3 +155,6 @@ coverage/
 uploads/
 public/uploads/
 storage/
+
+# Local-only personal reminder file (never commit)
+.local-secrets.md
