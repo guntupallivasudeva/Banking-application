@@ -14,7 +14,7 @@ const API_ROOT = (() => {
   } catch (_) { /* ignore */ }
   return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8000/api'
-    : 'https://YOUR-BACKEND-DOMAIN/api';
+    : 'https://banking-backend-two.vercel.app/api';
 })();
 const NORMALIZED_API_ROOT = API_ROOT.replace(/\/$/, '');
 
